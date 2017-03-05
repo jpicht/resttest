@@ -13,6 +13,8 @@ type action struct {
 	Method   string `yaml:"method"`
 	Expected []int  `yaml:"expected"`
 	Data     string `yaml:"data"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 func (a *action) Run(r *recipe, l logger.Logger) bool {
@@ -20,6 +22,11 @@ func (a *action) Run(r *recipe, l logger.Logger) bool {
 	if err != nil {
 		l.Errorf("Creating request failed: '%s'", err)
 		return false
+
+	}
+
+	if a.Username != "" || a.Password != "" {
+		req.SetBasicAuth(a.Username, a.Password)
 	}
 
 	l.Infof("%10s %s", req.Method, req.URL)
